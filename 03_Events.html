@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <button v-on:click="buttonClick">Click Me</button>
+        <div>{{counter}}</div>
+        <br> <br>
+        <!-- $event gives us information about the event itself - here it is click -->
+        <button v-on:click="buttonMsg('Hello there', $event)">Click Me for Msg</button>
+        <p>{{x}}, {{y}}</p>
+
+        <!-- Event modifiers -->
+         <!-- since both div and child button have same click function,
+          when clicked on div, we only trigger the div function,
+          but when clicked on button, we first trigger button's event and then the parent div's event -->
+        <!-- To only make the button display its event -> use .stop -->
+        <!-- To only allow an event to be triggered once after reload, use .once.once -->
+        <!-- Also .once does not propagate into children -->
+        <div v-on:click.once="buttonMsg('Hello there from Div', $event)">
+            Extra text
+            <button v-on:click.stop="buttonMsg('Hello there from Button', $event)">Click Me for Msg</button>
+            <br>
+            <!-- This will prevent the expected default behaviour of the div targetted, and instead allow only event function to work -->
+             <!-- event modifiers are also combinable -->
+            <a href="https://www.google.com"
+                v-on:click.prevent.stop.once = "buttonMsg('Hello there from Me', $event)"
+            >Google</a>
+        </div>
+
+        <br> <br>
+        <!-- basically key press event listeners -->
+        <div>
+            <input type="text" v-on:keyup = "pressedKey('idk')"> 
+            For any key
+        </div>  <br>
+        <!-- only triggers when enter is pressed -->
+        <div>
+            <input type="text" v-on:keyup.enter = "pressedKey('Enter')">    
+            For enter only
+        </div>  <br>
+        <!-- this triggers when enter and ctrl are pressed together -->
+        <div>
+            <input type="text" v-on:keyup.enter.ctrl = "pressedKey('ctrl + Enter')">
+            For ctrl + enter
+        </div>
+    </div>
+</body>
+<!-- THis is also the reallty iportant work that i have to do and i will not stop until i complete this work -->
+
+<script>
+    const { createApp, ref, reactive } = Vue;
+
+    createApp({
+        setup(){
+            let counter = ref(0);
+            let x = ref(0);
+            let y = ref(0);
+
+            function buttonClick(){
+                counter.value = counter.value + 1;
+            }
+
+            // we can also get useful information like the x and y coordinates of a clicked pixel on the button
+            function buttonMsg(msg, event){
+                x.value = event.x;
+                y.value  = event.y;
+                alert(msg);
+                console.log(event)
+            }
+
+            function pressedKey(key){
+                alert(`${key} was pressed`)
+            }
+
+            return {
+                buttonClick,
+                counter, buttonMsg,
+                x, y, pressedKey
+
+            }
+        }
+    }).mount('#app')
+
+</script>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-800 gap-4 text-white flex flex-col justify-center h-screen items-center">
+    
+    <div id="app" class="text-center">
+        <div class="text-4xl font-semibold">TO-DO LIST</div>
+        <div class="flex flex-col gap-8">
+            <div class="flex flex-col gap-3">
+                <div class="flex flex-row items-center">
+                    <p class="bg-gray-200 py-2 text-gray-500 rounded-l-lg px-2">Enter: </p>
+                    <input v-model.trim="newtodo.title" type="text" class="bg-white py-2 text-black px-2 rounded-r-lg outline-none" placeholder="Enter some task...">
+                </div>
+
+                <div class="flex flex-row justify-around">
+                    <button v-on:click="addTodo()" class="cursor-pointer px-3 py-2 border-[2px] bg-green-400 rounded-lg ">Add</button>
+                    <button v-on:click="resetTodo()" class="px-3 py-2 border-[2px] bg-red-400 rounded-lg ">Reset</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-100 rounded-lg px-5 py-4 border-[2px] border-blue-800">
+                <ul class="text-black text-start">
+                    <li v-for="(todo, idx) in todos" :key="todo.id" 
+                        class="flex flex-row justify-between">
+                        <div :class="{ 'line-through': todo.status }" class="font-semibold">
+                            {{idx + 1}}.  {{ todo.title }} 
+                        </div>
+                        
+                        <div class="flex flex-row gap-2">
+                            <button v-on:click="changeStatus(idx)" class="cursor-pointer">{{ todo.status ? '✅' : '❌' }}</button>
+                            <button v-on:click="delteTodo(idx)">🗑️</button>
+                            <button v-on:click="updateTodo(idx)" >🔄</button>
+                        </div>
+                    </li>
+                </ul>
+                <div v-if="todos.length <= 0" class="font-semibold text-black">
+                    No Todos Available
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    const {createApp, ref, reactive, watch, compute} = Vue;
+
+    createApp({
+        setup(){
+            const msg = "test";
+            let todos = reactive([
+                { title: "Wash cloths", status: true },
+                { title: "Study", status: false },
+                { title: "Sleep", status: false },
+            ])
+            const newtodo = reactive({
+                title: "",
+                status: false
+            })
+            const up = reactive({active: false, idx: -1});
+
+            function addTodo() {
+                if (newtodo.title.trim() !== "") {
+                    if (up.active && up.idx != -1) {
+                        todos[up.idx].title = newtodo.title;
+                        todos[up.idx].status = false;
+                        up.active = false;
+                        up.idx = -1;
+                    } else {
+                        todos.value.push({ title: newtodo.title, status: false });
+                    }
+
+                    newtodo.title = "";
+                } else {
+                    alert('Enter something in Todo please');
+                }
+            }
+
+
+            function resetTodo(){
+                newtodo.title = "";
+            }
+
+            function changeStatus(idx){
+                todos[idx].status = !todos[idx].status;
+            }
+
+            function delteTodo(idx){
+                todos.splice(idx, 1);
+            }
+
+            function updateTodo(idx){
+                const temp = todos[idx];
+                newtodo.title = temp.title;
+                newtodo.status = false;
+                up.active = true;
+                up.idx = idx;
+            }
+
+            return {
+                msg, todos, newtodo,
+                addTodo, resetTodo, changeStatus,
+                delteTodo, updateTodo, 
+            }
+        }
+    }).mount('#app')
+
+</script>
+
+</html>

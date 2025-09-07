@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- To convert normal HTML styling to vue -->
+        <div style="background-color: yellow; font-size: large;">Hello world</div>
+        <!-- Use v-bind:, convert the string into object, do camel casing wherever there is -, convert ; to , -->
+        <div v-bind:style="{backgroundColor: 'yellowgreen', fontSize: fontsizetemp+'px',}">Hello world</div>
+        <!-- Another way of using -->
+        <div v-bind:style="{'background-color': 'green', 'font-size': 'large',}">Hello world</div>
+
+        <!-- Used to assign various styles using vue directive -->
+        <span class="h1" v-bind:class="{h2:false, 'bg-green': isGreen(), 'p-m':true}">
+            Random text
+        </span> <br/>
+        <!-- COnditional Use Style object -->
+        <span class="h1" v-bind:class="isMainTitle() ? MainTitle : '' " >
+            Random text 2
+        </span> <br/>
+        <!-- Using a vue object to define class -->
+        <span v-bind:style="someStyles.style1" >
+            Random text 3
+        </span>
+        <!-- If we want multiple style vue objects -->
+        <span class="h1" v-bind:class="[isMainTitle() ? MainTitle : '', borderClass] ">
+            Random text 4
+        </span> <br>
+        <!-- Since v-bind so used freq, we can just use :class, instead of v-bind:class -->
+        <span class="h1" :class="[isMainTitle() ? MainTitle : '', borderClass] ">
+            Random text 4
+        </span>
+    </div>
+</body>
+
+<script>
+    const { createApp, ref, reactive } = Vue;
+
+    createApp({
+        setup(){
+            const fontsizetemp = 60;
+            const MainTitle = {
+                h2: true,
+                "bg-blue": true
+            }
+            const someStyles = {
+                style1: {
+                    fontSize: "40px",
+                    backgroundColor: "green",
+                    margin: "20px",
+                    border: "2px solid black"
+                }
+            }
+
+            const borderClass = {
+                bd: true
+            }
+
+            function isGreen(){
+                return true;
+            }
+
+            function isMainTitle()  { return true; }
+
+            return {
+                fontsizetemp,
+                isGreen, MainTitle,
+                isMainTitle, someStyles,
+                borderClass,
+            }
+        }
+    }).mount('#app')
+
+</script>
+
+<style>
+    .h1{
+        color: aqua;
+    }
+    .h2{
+        color: lightgreen;
+    }
+    .bg-green{
+        background-color: green;
+    } 
+    .bg-blue{
+        background-color: blueviolet;
+    }   
+    .p-m{
+        padding-left: 2%;
+    }
+    .bd{
+        border: 3px solid red
+    }
+</style>
+
+</html>

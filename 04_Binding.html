@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- with v-model we can directly connect the input field to a variable -->
+        <!-- We also have modifiers here: .trim: no spaces back or front, .lazy: only change value when clicked out of div -->
+        <!-- .number: always parses the value in number -->
+        Name: <input type="text" v-model.trim="name">        <br> <br>
+        Age: <input type="number" v-model.lazy="age">
+        <br>    <br>
+        <div>{{name}}'s age is {{age}}</div>
+
+        <br> <br>
+        <!-- using inline methods -->
+        <p>{{counter}}</p>
+        <button v-on:click="counter++">Increment</button>
+        <button v-on:click="counter--">Decrement</button>
+
+        <!-- to show stuff -->
+        <!-- PROBLEM: whenever we click on increment and decrement, the getFullName fxn is called
+         this happens bcz when one ref component is refreshed all others are also refresshed,
+         to stop this from happening we can use a computed component -->
+         <!-- a computed variable is not a function so remove () after the function -->
+        <p>{{getFullName}}</p>  <br>
+        <input type="text" v-model="firstName">
+    </div>
+</body>
+
+<script>
+    const { createApp, ref, reactive, computed, watch } = Vue;
+
+    createApp({
+        setup(){
+            const name = ref("Om");
+            const age = ref(22);
+            const counter = ref(0);
+            const firstName = ref('Om'), lastName = ref("Shukla");
+
+            // watchers are used to do some event when specific conditions are met
+            // we first define on what variable is watch on and then a callback to do something on it
+            watch(() => counter.value, (newVal, oldVal) => {
+                console.log("counter's val changed from ", oldVal, " to ", newVal);
+                if(counter.value == 5){     // or we can use newVal here instead of counter.value
+                    alert("Apki Mummy ladiz hai")
+                    counter.value = 0;
+                }
+            })
+
+            const getFullName = computed((prev) => {
+                console.log(prev);
+                // The previous here refers to the complete value i.e., first Name + " " + lastName
+                // Not just first name even thought we are just modifying first name
+                if(prev == "Om 1 Shukla"){
+                    console.log("Achha hai -> Special case")
+                }
+                return firstName.value + " " + lastName.value;
+            })
+
+            return {
+                name, age, counter,
+                getFullName, firstName,
+            }
+        }
+    }).mount('#app');
+
+</script>
+
+</html>

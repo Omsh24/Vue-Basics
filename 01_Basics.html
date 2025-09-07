@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>{{getmsg(message)}}</h1>
+        <h2>Lucky Number: {{luckyNumber}}</h2>
+        <h2>{{change()}}</h2>
+        <h3>Number list: {{lns.map((i, id) => (i*i))}}</h3>
+        <h3>Data: {{imp.name}} of House {{imp.house}} is {{imp.size}} foot tall.</h3>
+        
+        <br/>
+        <h3> Odd Number: {{lns.filter((l) => (l%2 == 1))}} </h3>
+        <h4>Random Number: {{ Math.ceil(Math.random()*100) }}</h4>
+        <h4>New Random Number: {{getRandom2()}}</h4>
+        <br>
+        <h1><u>Directives</u></h1>
+        <br/>
+        <!-- This one directly render whatever is written in m1 -->
+        <span>{{m1}}</span>             
+        <!-- This one renders the html command as it would be in html format here -->
+        <!-- This is called a vue directive -->
+        <span v-html="m1"></span>
+        <!-- This makes the changing component be rendered only once and never again -->
+        <h2 v-once>Rendered Once Lucky Number: {{luckyNumber}}</h2>
+        <!-- This wont work as vue makes the page redirect directly to `{{port}}` -->
+        <a href={{port}}>Portfolio website Not working</a>   <br>
+        <!-- So we use v-bind here to fix this issue -->
+        <a v-bind:href="port">Portfolio website is working</a>
+        <!-- Only shows the component when consition in "" is true -->
+        <!-- Even when condition is false, this ele will be visible with display:none in DOM -->
+        <p v-show="imp.isAlive">Number of whores tyrion has been with: {{imp.whores}}</p>
+        <!-- Same as v-show but not visible in DOM when condition is false -->
+        <p v-if="imp.isAlive">Number of whores tyrion has been with: {{imp.whores}}</p>
+        <p v-else-if="imp.beenAHand < 5">Tyrion is Dead and Had been a hand for long</p>
+        <p v-else>Tyrion is Dead</p>
+
+        <!-- Loop -->
+        {{shuffleImp()}}
+        <p>Projects</p>
+        <ul>
+            <!-- By adding this key thing all the components inside the li will move together instead fo just the one modified -->
+            <li v-for="(proj, idx) in emp.projects" :key="proj.name">
+                <span>{{idx+1}} - {{proj.name}} : {{proj.timeline}}</span>
+                <input type="text">
+            </li>
+        </ul>
+        <p>Projects with v-once</p>
+        <ul>
+            <li v-for="(proj, idx) in emp.projects">
+                <span v-once>{{idx+1}} - {{proj.name}} : {{proj.timeline}}</span>
+            </li>
+        </ul>
+        <p>IMP</p>
+        <ul>
+            <li v-for="(value, key) in imp">
+                <span>{{key.toUpperCase()}} = {{value}}</span>
+            </li>
+        </ul>
+
+
+
+    </div>
+</body>
+
+    <script>
+        // ref is used to dynamically update the values of a variable in the vue app
+        const { createApp, ref, reactive } = Vue;
+
+        createApp({
+            // Think of this as the main method
+            setup(){
+                const message = "Hello OM!!!"
+                // ref is used like this
+                let luckyNumber = ref(36);
+                const lns = [1,2,3,4,5,6,7,8,9,10];
+
+                // reactive is the same as ref but only works for object data types, and does not requires the use of .value to access
+                const imp = reactive({
+                    name: "Tyrion",
+                    house: "Lanister",
+                    size: 3,
+                    isAlive: true,
+                    whores: 10000,
+                    beenAHand: 5,
+                })
+
+                const emp = reactive({
+                    projects: [
+                        { name: "frontend", timeline: "1" },
+                        { name: "backend", timeline: "2" },
+                        { name: "fullstack", timeline: "3" }
+                    ]
+                })
+
+                // to pass html stuff in a variable
+                const m1 = `<h3><u>${message}</u></h3>`;
+                const port = "https://portfolio-mu-sable-89.vercel.app/"
+
+                // no difference between these while running 
+                function getRandom(){
+                    return Math.ceil(Math.random()*100);
+                }
+
+                const getRandom2 = () => {
+                    return Math.ceil(Math.random()*100);
+                }
+
+                function getmsg(message){
+                    return message.toUpperCase();
+                }
+
+                function updateLuckyNumber(){
+                    luckyNumber.value = Math.ceil(Math.random()*100);
+                    return luckyNumber.value;
+                }
+
+                function change(){
+                    setTimeout(() => {
+                        luckyNumber.value = Math.floor(Math.random()*100);
+                        // this is the format with which we can use ref on objects
+                            // imp.value.size = Math.ceil(Math.random()*5);
+                        // reactive does the same thing as ref but we dont have to write .value everywhere
+                        imp.size = Math.ceil(Math.random()*5);
+                    }, 1000);
+                }
+
+                function shuffleImp(){
+                    setInterval(() => {
+                        emp.projects.sort(()=>Math.random()-0.5)
+                    }, 2000)
+                }   
+
+
+                return {
+                    message,
+                    luckyNumber,
+                    lns, imp,
+                    getRandom, getRandom2,
+                    getmsg, updateLuckyNumber,
+                    change, m1, port, emp,
+                    shuffleImp,
+
+                };
+            },
+        }).mount("#app");
+    </script>
+
+</html>

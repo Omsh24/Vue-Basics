@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app" class="flex flex-col justify-center items-center h-screen bg-blue-400">
+        <div class="text-xl bg-blue-400 px-10 py-5 font-bold text-white">
+            Movies Add, Delete and See
+            <hr>
+        </div>
+        <div class="flex flex-col bg-blue-400">
+            <div class="flex flex-col gap-2 ">
+                <div class="flex flex-row gap-3">
+                    <p class="text-white">Title: </p>
+                    <input type="text" v-model="newmovie.title" class="border bg-white border-blue-600 rounded-full border-[2px]">
+                </div>
+                <div class="flex flex-row gap-3">
+                    <p class="text-white">Year: </p>
+                    <input type="text" v-model="newmovie.year" class="border bg-white border-blue-600 rounded-full border-[2px]">
+                </div>
+                <div class="flex flex-row justify-around">
+                    <button v-on:click="addMovie($event)" class="px-5 py-3 bg-green-400 rounded-full border-[2px] border-green-600">
+                        Add
+                    </button>
+                    <button v-on:click="deleteMovie()" class="px-5 py-3 bg-red-400 rounded-full border-[2px] border-red-600">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p class="text-xl font-bold text-white">Movies List</p>
+            <!-- <hr class="text-white"> -->
+            <ul class="bg-white border-[2px] border-blue-800 px-10 py-5">
+                <li v-for="movie in movies" class=" border-b-[2px] border-b-blue-800 font-semibold text-blue-600">
+                    {{movie.title}} - {{movie.year}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+<script>
+    const {createApp, ref, reactive, watch, compute} = Vue;
+
+    createApp({
+        setup(){
+            let movies = reactive([
+                {title: "Movie 1", year: 2000 },
+                {title: "Movie 2", year: 2010 },
+                {title: "Movie 3", year: 2020 },
+            ])
+
+            let newmovie = reactive({
+                title: '',
+                year: '',
+            })
+
+            function addMovie(event){
+                if(movies.length < 5){
+                    console.log(newmovie.title, " ", newmovie.year);
+                    movies.push({
+                        title: newmovie.title,
+                        year: newmovie.year
+                    });
+                    newmovie.title = ''
+                    newmovie.year = ''
+                }
+            }
+
+            function deleteMovie(){
+                movies.pop();
+            }
+
+            return {
+                movies, newmovie,
+                addMovie, deleteMovie
+            }
+        }
+    }).mount('#app')
+
+</script>
+
+</html>
