@@ -73,7 +73,7 @@
                         up.active = false;
                         up.idx = -1;
                     } else {
-                        todos.value.push({ title: newtodo.title, status: false });
+                        todos.push({ title: newtodo.title, status: false });
                     }
 
                     newtodo.title = "";
@@ -85,6 +85,8 @@
 
             function resetTodo(){
                 newtodo.title = "";
+                up.active = false;
+                up.idx = -1;
             }
 
             function changeStatus(idx){
